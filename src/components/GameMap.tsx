@@ -7,7 +7,14 @@ import './GameMap.css'
 export interface GameMapProps {
   name: string
   image: string
-  /** Elementos adicionales encima del mapa como puntos de interés. **/
+  /** Elementos adicionales encima del mapa como puntos de interés. 
+   * Ejemplo:
+   *  <Popup>
+        <strong>Campamento Base</strong> <br />
+        Lugar de inicio.
+      </Popup>
+   * 
+  **/
   children?: ReactNode
   className?: string
 }
