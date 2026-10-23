@@ -1,19 +1,20 @@
 import './App.css'
 import GameMap from './components/GameMap'
-
-const exampleMapImage =
-  'src/assets/shrine_ruins.jpg'
+import {
+  SHRINE_RUINS_FILTERS,
+  SHRINE_RUINS_LOCATIONS,
+} from './data/shrineRuinsLocations'
+import exampleMapImage from './assets/shrine_ruins_map.jpg'
 
 function App() {
   return (
     <main className="app">
-      <GameMap name="Mapa de juego x" image={exampleMapImage} children={<div style={{ position: 'absolute', top: '50px', left: '50px' }}>Punto X</div>} />
-      {
-      /* 
-      Pendiente: Crear componente de los puntos de interes que tenga como argumentos a que categoria pertenece,
-      nombre, descripcion, imagen (o icono), coordenadas para ubicar, bool de visibilidad 
-      */
-      }
+      <GameMap
+        name="Shrine Ruins"
+        image={exampleMapImage}
+        children={SHRINE_RUINS_LOCATIONS}
+        filterCategories={SHRINE_RUINS_FILTERS}
+      />
     </main>
   )
 }
