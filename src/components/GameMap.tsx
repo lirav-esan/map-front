@@ -1,53 +1,199 @@
-import type { ReactNode } from 'react'
-import { MapContainer, ImageOverlay, Marker, Popup } from 'react-leaflet';
-import L from 'leaflet';
+import { useMemo, useState, type ReactNode } from 'react'
+import {
+  ImageOverlay,
+  MapContainer,
+  Marker,
+  Popup,
+  useMap,
+} from 'react-leaflet'
+import type { LatLngBoundsExpression, LatLngExpression } from 'leaflet'
+import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
 import './GameMap.css'
+import MapFilters, { type MapFilterCategory } from './MapFilters'
+
+export interface MapNode {
+  id: string
+  position: LatLngExpression
+  content: ReactNode
+  category?: string
+  title?: string
+  checked?: boolean
+  iconUrl?: string
+}
+
+export type GameMapChild = MapNode | [ReactNode, LatLngExpression]
 
 export interface GameMapProps {
   name: string
   image: string
-  /** Elementos adicionales encima del mapa como puntos de interés. 
-   * Ejemplo:
-   *  <Popup>
-        <strong>Campamento Base</strong> <br />
-        Lugar de inicio.
-      </Popup>
-   * 
-  **/
-  children?: ReactNode
+  /** Cada hijo se dibuja como un marcador en la coordenada indicada. */
+  children?: GameMapChild[]
+  filterCategories?: MapFilterCategory[]
   className?: string
 }
 
+function ZoomControls() {
+  const map = useMap()
 
+  const toggleFullscreen = async () => {
+    const container = map.getContainer()
+    if (document.fullscreenElement) {
+      await document.exitFullscreen()
+      return
+    }
 
-function GameMap({ name, image, children, className = '' }: GameMapProps) {
-  const bounds: L.LatLngBoundsExpression = [[0, 0], [1000, 1000]];
+    await container.requestFullscreen()
+  }
+
+  return (
+    <div className="game-map__controls leaflet-control" aria-label="Controles del mapa">
+      <button type="button" onClick={() => map.zoomIn()} aria-label="Acercar mapa">
+        +
+      </button>
+      <button type="button" onClick={() => map.zoomOut()} aria-label="Alejar mapa">
+        −
+      </button>
+      <button
+        type="button"
+        onClick={toggleFullscreen}
+        aria-label="Mostrar mapa en pantalla completa"
+      >
+        ⛶
+      </button>
+    </div>
+  )
+}
+
+function toMapNode(child: GameMapChild, index: number): MapNode {
+  if (Array.isArray(child)) {
+    return {
+      id: `map-node-${index}`,
+      position: child[1],
+      content: child[0],
+    }
+  }
+
+  return child
+}
+
+function GameMap({
+  name,
+  image,
+  children = [],
+  filterCategories = [],
+  className = '',
+}: GameMapProps) {
+  const bounds: LatLngBoundsExpression = [[0, 0], [256, 256]]
+  const nodes = useMemo(() => children.map(toMapNode), [children])
+  const [search, setSearch] = useState('')
+  const [hiddenCategories, setHiddenCategories] = useState<Set<string>>(new Set())
+  const [hideChecked, setHideChecked] = useState(false)
+  const [displayTitles, setDisplayTitles] = useState(true)
+
+  const categories = useMemo<MapFilterCategory[]>(() => {
+    const categoryMap = new Map(
+      filterCategories.map((category) => [category.id, category]),
+    )
+    nodes.forEach((node) => {
+      const categoryId = node.category ?? 'Puntos del mapa'
+      if (!categoryMap.has(categoryId)) {
+        categoryMap.set(categoryId, {
+          id: categoryId,
+          label: categoryId,
+          count: 0,
+          visible: true,
+          group: 'Other',
+        })
+      }
+    })
+
+    return Array.from(categoryMap.values()).map((category) => ({
+      ...category,
+      visible: !hiddenCategories.has(category.id),
+    }))
+  }, [filterCategories, hiddenCategories, nodes])
+
+  const visibleNodes = nodes.filter((node) => {
+    const category = node.category ?? 'Puntos del mapa'
+    const matchesSearch =
+      !search ||
+      node.title?.toLocaleLowerCase().includes(search.toLocaleLowerCase()) ||
+      category.toLocaleLowerCase().includes(search.toLocaleLowerCase())
+
+    return (
+      matchesSearch &&
+      !hiddenCategories.has(category) &&
+      !(hideChecked && node.checked)
+    )
+  })
+
+  const toggleCategory = (category: string) => {
+    setHiddenCategories((current) => {
+      const next = new Set(current)
+      if (next.has(category)) next.delete(category)
+      else next.add(category)
+      return next
+    })
+  }
+
   return (
     <section className={`game-map ${className}`.trim()} aria-label={`Mapa de ${name}`}>
       <header className="game-map__header">
         <h1 className="game-map__title">{name}</h1>
       </header>
 
-      <div style={{ height: '22rem', width: '100%' }}>
-        <MapContainer
-          center={[500, 500]}
-          zoom={-1}
-          crs={L.CRS.Simple} 
-          style={{ height: '100%', width: '50%', background: '#1a1a1a' }}
-          minZoom={-2}
-          maxZoom={2}
-        >
-          <ImageOverlay url={image} bounds={bounds} />
+      <div className="game-map__layout">
+        <MapFilters
+          categories={categories}
+          search={search}
+          hideChecked={hideChecked}
+          displayTitles={displayTitles}
+          onSearchChange={setSearch}
+          onToggleChecked={() => setHideChecked((value) => !value)}
+          onToggleTitles={() => setDisplayTitles((value) => !value)}
+          onToggleCategory={toggleCategory}
+          onShowAll={() => setHiddenCategories(new Set())}
+          onHideAll={() => setHiddenCategories(new Set(categories.map(({ id }) => id)))}
+        />
 
-          <Marker position={[120, 470]}>
-            <Popup>
-              <strong>Campamento Base</strong> <br />
-              Lugar de inicio.
-            </Popup>
-            {children && <Popup>{children}</Popup>}
-          </Marker>
-        </MapContainer>
+        <div className="game-map__viewport">
+          <MapContainer
+            center={[128, 128]}
+            zoom={2}
+            zoomControl={false}
+            crs={L.CRS.Simple}
+            style={{ height: '100%', width: '100%' }}
+            minZoom={0}
+            maxZoom={3}
+            scrollWheelZoom
+          >
+            <ImageOverlay url={image} bounds={bounds} />
+            <ZoomControls />
+
+            {visibleNodes.map((node) => (
+              <Marker
+                key={node.id}
+                position={node.position}
+                icon={node.iconUrl ? L.icon({
+                  iconUrl: node.iconUrl,
+                  iconSize: [24, 24],
+                  iconAnchor: [12, 12],
+                  popupAnchor: [0, -12],
+                }) : undefined}
+              >
+                {node.title && displayTitles && (
+                  <Popup>
+                    <strong>{node.title}</strong>
+                    <br />
+                    {node.content}
+                  </Popup>
+                )}
+                {!node.title && <Popup>{node.content}</Popup>}
+              </Marker>
+            ))}
+          </MapContainer>
+        </div>
       </div>
     </section>
   )
