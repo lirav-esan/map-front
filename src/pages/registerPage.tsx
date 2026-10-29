@@ -188,7 +188,7 @@ export const RegisterPage: React.FC = () => {
             {/* Separador */}
             <div className="flex items-center my-3">
               <div className="flex-grow border-t border-purple-500/30"></div>
-              <span className="px-3 text-xs text-purple-300 uppercase">O registrarse con</span>
+              <span className="px-3 text-xs text-purple-300 uppercase">Or sign up with</span>
               <div className="flex-grow border-t border-purple-500/30"></div>
             </div>
 

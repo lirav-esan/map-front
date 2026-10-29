@@ -120,7 +120,7 @@ export const LoginPage: React.FC = () => {
             {/* Campo Email */}
             <div>
               <label className="block text-sm font-medium text-purple-200 mb-2">
-                Correo Electrónico
+                Email
               </label>
               <input
                 type="email"
@@ -192,7 +192,7 @@ export const LoginPage: React.FC = () => {
             {/* Separador */}
             <div className="flex items-center my-4">
               <div className="flex-grow border-t border-purple-500/30"></div>
-              <span className="px-3 text-xs text-purple-300 uppercase">O continuar con</span>
+              <span className="px-3 text-xs text-purple-300 uppercase">Or log in with</span>
               <div className="flex-grow border-t border-purple-500/30"></div>
             </div>
 
