@@ -1,22 +1,15 @@
-import './App.css'
-import GameMap from './components/GameMap'
-import {
-  SHRINE_RUINS_FILTERS,
-  SHRINE_RUINS_LOCATIONS,
-} from './data/shrineRuinsLocations'
-import exampleMapImage from './assets/shrine_ruins_map.jpg'
+import { Navigate, Route, Routes } from 'react-router-dom'
+import LoginPage from './pages/loginPage'
+import RegisterPage from './pages/registerPage'
+import MapPage from './pages/mapPage'
 
-function App() {
+export default function App() {
   return (
-    <main className="app">
-      <GameMap
-        name="Shrine Ruins"
-        image={exampleMapImage}
-        children={SHRINE_RUINS_LOCATIONS}
-        filterCategories={SHRINE_RUINS_FILTERS}
-      />
-    </main>
+    <Routes>
+      <Route path="/" element={<Navigate to="/login" replace />} />
+      <Route path="/login" element={<LoginPage />} />
+      <Route path="/register" element={<RegisterPage />} />
+      <Route path="/map" element={<MapPage />} />
+    </Routes>
   )
 }
-
-export default App
