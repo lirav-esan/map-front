@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { GoogleLogin } from '@react-oauth/google';
 
 export const LoginPage: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -10,6 +11,7 @@ export const LoginPage: React.FC = () => {
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
 
+  //login tradicional
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
@@ -49,6 +51,41 @@ export const LoginPage: React.FC = () => {
     }
   };
 
+  //login manejado con google
+  const handleGoogleSuccess = async (credentialResponse: any) => {
+    setError('');
+    setLoading(true);
+
+    try {
+      // credentialResponse.credential es el IdToken que valida GoogleJsonWebSignature en tu backend
+      const idToken = credentialResponse.credential;
+
+      const response = await fetch('http://localhost:5261/api/Auth/google', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ idToken }),
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(errorText || 'Error al autenticar con Google');
+      }
+
+      const data = await response.json();
+
+      // Guardar sesión
+      localStorage.setItem('token', data.token);
+      localStorage.setItem('username', data.username);
+      localStorage.setItem('email', data.email);
+
+      navigate('/map');
+    } catch (err: any) {
+      setError(err.message || 'No se pudo iniciar sesión con Google.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="relative w-full h-screen overflow-hidden bg-gradient-to-br from-purple-950 via-indigo-900 to-purple-900 flex items-center justify-center font-sans">
       {/* Elementos decorativos de fondo estilo gaming / fantasía */}
@@ -61,10 +98,10 @@ export const LoginPage: React.FC = () => {
         
         {/* Lado Izquierdo: Bienvenida */}
         <div className="text-white mb-10 md:mb-0 md:max-w-xl">
-          <h1 className="text-5xl md:text-7xl font-bold tracking-wide drop-shadow-lg mb-8">
+          <h1 className="text-5xl md:text-7xl font-bold tracking-wide drop-shadow-lg mb-8 italic">
             Welcome back!
           </h1>
-          <p className="text-xl text-purple-200 tracking-wider font-light italic">
+          <p className="text-xl text-purple-200 tracking-wider font-light">
             Ready to grind your favorite games? Sign in and start exploring...
           </p>
         </div>
@@ -151,6 +188,25 @@ export const LoginPage: React.FC = () => {
             >
               {loading ? 'Iniciando sesión...' : 'SIGN IN'}
             </button>
+
+            {/* Separador */}
+            <div className="flex items-center my-4">
+              <div className="flex-grow border-t border-purple-500/30"></div>
+              <span className="px-3 text-xs text-purple-300 uppercase">O continuar con</span>
+              <div className="flex-grow border-t border-purple-500/30"></div>
+            </div>
+
+            {/* Botón de Google */}
+            <div className="flex justify-center w-full">
+              <GoogleLogin
+                onSuccess={handleGoogleSuccess}
+                onError={() => setError('Error al autenticar con Google')}
+                theme="outline"
+                shape="pill"
+                size="medium"
+                width="100%"
+              />
+            </div>
 
             {/* Enlaces inferiores */}
             <div className="flex flex-col space-y-3 pt-2 text-center text-sm">

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { GoogleLogin } from '@react-oauth/google';
 
 export const RegisterPage: React.FC = () => {
   const [username, setUsername] = useState('');
@@ -10,6 +11,7 @@ export const RegisterPage: React.FC = () => {
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
 
+  //registro tradicional
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
@@ -45,6 +47,39 @@ export const RegisterPage: React.FC = () => {
     }
   };
 
+  //registro con google
+  const handleGoogleSuccess = async (credentialResponse: any) => {
+    setError('');
+    setLoading(true);
+
+    try {
+      const idToken = credentialResponse.credential;
+
+      const response = await fetch('http://localhost:5261/api/Auth/google', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ idToken }),
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(errorText || 'Error al autenticar con Google');
+      }
+
+      const data = await response.json();
+
+      localStorage.setItem('token', data.token);
+      localStorage.setItem('username', data.username);
+      localStorage.setItem('email', data.email);
+
+      navigate('/map');
+    } catch (err: any) {
+      setError(err.message || 'No se pudo completar el registro con Google.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="relative w-full h-screen overflow-hidden bg-gradient-to-br from-purple-950 via-indigo-900 to-purple-900 flex items-center justify-center font-sans">
       {/* Elementos decorativos de fondo */}
@@ -57,10 +92,10 @@ export const RegisterPage: React.FC = () => {
         
         {/* Lado Izquierdo: Bienvenida */}
         <div className="text-white mb-10 md:mb-0 md:max-w-xl">
-          <h1 className="text-5xl md:text-7xl font-bold tracking-wide drop-shadow-lg mb-10">
+          <h1 className="text-5xl md:text-7xl font-bold tracking-wide drop-shadow-lg mb-10 italic">
             Want to save your progress?
           </h1>
-          <p className="text-xl text-purple-200 tracking-wider font-light italic">
+          <p className="text-xl text-purple-200 tracking-wider font-light">
             Join our community of gamers and explore your favorite games for free. Sign up now to start!
           </p>
         </div>
@@ -149,6 +184,25 @@ export const RegisterPage: React.FC = () => {
             >
               {loading ? 'Registrando...' : 'SIGN UP'}
             </button>
+
+            {/* Separador */}
+            <div className="flex items-center my-3">
+              <div className="flex-grow border-t border-purple-500/30"></div>
+              <span className="px-3 text-xs text-purple-300 uppercase">O registrarse con</span>
+              <div className="flex-grow border-t border-purple-500/30"></div>
+            </div>
+
+            {/* Botón de Google */}
+            <div className="flex justify-center w-full">
+              <GoogleLogin
+                onSuccess={handleGoogleSuccess}
+                onError={() => setError('Error al registrarse con Google')}
+                theme="outline"
+                shape="pill"
+                size="medium"
+                width="100%"
+              />
+            </div>
 
             {/* Enlace inferior */}
             <div className="pt-2 text-center text-sm">
