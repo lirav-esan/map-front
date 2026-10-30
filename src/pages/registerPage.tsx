@@ -38,8 +38,8 @@ export const RegisterPage: React.FC = () => {
       localStorage.setItem('username', data.username);
       localStorage.setItem('email', data.email);
 
-      // Redirigir al mapa interactivo
-      navigate('/map');
+      // Redirigir al dashboard
+      navigate('/gameSelection');
     } catch (err: any) {
       setError(err.message || 'No se pudo completar el registro.');
     } finally {
@@ -72,7 +72,7 @@ export const RegisterPage: React.FC = () => {
       localStorage.setItem('username', data.username);
       localStorage.setItem('email', data.email);
 
-      navigate('/map');
+      navigate('/gameSelection');
     } catch (err: any) {
       setError(err.message || 'No se pudo completar el registro con Google.');
     } finally {

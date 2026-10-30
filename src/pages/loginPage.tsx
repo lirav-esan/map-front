@@ -43,7 +43,7 @@ export const LoginPage: React.FC = () => {
         localStorage.setItem('savedEmail', email);
       }
 
-      navigate('/map');
+      navigate('/gameSelection');
     } catch (err: any) {
       setError(err.message || 'Credenciales inválidas o error de conexión.');
     } finally {
@@ -57,7 +57,7 @@ export const LoginPage: React.FC = () => {
     setLoading(true);
 
     try {
-      // credentialResponse.credential es el IdToken que valida GoogleJsonWebSignature en tu backend
+      // credentialResponse.credential es el IdToken que valida GoogleJsonWebSignature en el backend
       const idToken = credentialResponse.credential;
 
       const response = await fetch('http://localhost:5261/api/Auth/google', {
@@ -78,7 +78,7 @@ export const LoginPage: React.FC = () => {
       localStorage.setItem('username', data.username);
       localStorage.setItem('email', data.email);
 
-      navigate('/map');
+      navigate('/gameSelection');
     } catch (err: any) {
       setError(err.message || 'No se pudo iniciar sesión con Google.');
     } finally {
