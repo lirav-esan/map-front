@@ -138,64 +138,74 @@ function GameMap({
   }
 
   return (
-    <section className={`game-map ${className}`.trim()} aria-label={`Mapa de ${name}`}>
-      <header className="game-map__header">
-        <h1 className="game-map__title">{name}</h1>
-      </header>
+    <div className="min-w-screen min-h-screen bg-gradient-to-br from-[#1d1d1d] via-[#162225] to-[#11181a] relative overflow-x-hidden">
 
-      <div className="game-map__layout">
-        <MapFilters
-          categories={categories}
-          search={search}
-          hideChecked={hideChecked}
-          displayTitles={displayTitles}
-          onSearchChange={setSearch}
-          onToggleChecked={() => setHideChecked((value) => !value)}
-          onToggleTitles={() => setDisplayTitles((value) => !value)}
-          onToggleCategory={toggleCategory}
-          onShowAll={() => setHiddenCategories(new Set())}
-          onHideAll={() => setHiddenCategories(new Set(categories.map(({ id }) => id)))}
-        />
+      {/* Elementos decorativos de fondo */}
+      <div className="absolute top-10 left-10 w-48 h-48 rounded-full border-4 border-purple-400/10 pointer-events-none" />
+      <div className="absolute bottom-10 right-20 w-72 h-72 rounded-full border-2 border-purple-500/20 pointer-events-none" />
 
-        <div className="game-map__viewport">
-          <MapContainer
-            center={[128, 128]}
-            zoom={2}
-            zoomControl={false}
-            crs={L.CRS.Simple}
-            style={{ height: '100%', width: '100%' }}
-            minZoom={0}
-            maxZoom={3}
-            scrollWheelZoom
-          >
-            <ImageOverlay url={image} bounds={bounds} />
-            <ZoomControls />
+      <div className="max-w-7xl mx-auto relative z-10">
 
-            {visibleNodes.map((node) => (
-              <Marker
-                key={node.id}
-                position={node.position}
-                icon={node.iconUrl ? L.icon({
-                  iconUrl: node.iconUrl,
-                  iconSize: [24, 24],
-                  iconAnchor: [12, 12],
-                  popupAnchor: [0, -12],
-                }) : undefined}
+        <section className={`game-map ${className}`.trim()} aria-label={`Mapa de ${name}`}>
+          <header className="game-map__header">
+            <h1 className="game-map__title">{name}</h1>
+          </header>
+
+          <div className="game-map__layout">
+            <MapFilters
+              categories={categories}
+              search={search}
+              hideChecked={hideChecked}
+              displayTitles={displayTitles}
+              onSearchChange={setSearch}
+              onToggleChecked={() => setHideChecked((value) => !value)}
+              onToggleTitles={() => setDisplayTitles((value) => !value)}
+              onToggleCategory={toggleCategory}
+              onShowAll={() => setHiddenCategories(new Set())}
+              onHideAll={() => setHiddenCategories(new Set(categories.map(({ id }) => id)))}
+            />
+
+            <div className="game-map__viewport">
+              <MapContainer
+                center={[128, 128]}
+                zoom={2}
+                zoomControl={false}
+                crs={L.CRS.Simple}
+                style={{ height: '100%', width: '100%' }}
+                minZoom={0}
+                maxZoom={3}
+                scrollWheelZoom
               >
-                {node.title && displayTitles && (
-                  <Popup>
-                    <strong>{node.title}</strong>
-                    <br />
-                    {node.content}
-                  </Popup>
-                )}
-                {!node.title && <Popup>{node.content}</Popup>}
-              </Marker>
-            ))}
-          </MapContainer>
-        </div>
+                <ImageOverlay url={image} bounds={bounds} />
+                <ZoomControls />
+
+                {visibleNodes.map((node) => (
+                  <Marker
+                    key={node.id}
+                    position={node.position}
+                    icon={node.iconUrl ? L.icon({
+                      iconUrl: node.iconUrl,
+                      iconSize: [24, 24],
+                      iconAnchor: [12, 12],
+                      popupAnchor: [0, -12],
+                    }) : undefined}
+                  >
+                    {node.title && displayTitles && (
+                      <Popup>
+                        <strong>{node.title}</strong>
+                        <br />
+                        {node.content}
+                      </Popup>
+                    )}
+                    {!node.title && <Popup>{node.content}</Popup>}
+                  </Marker>
+                ))}
+              </MapContainer>
+            </div>
+          </div>
+        </section>
       </div>
-    </section>
+    </div>
   )
 }
 

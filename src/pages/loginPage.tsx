@@ -87,12 +87,12 @@ export const LoginPage: React.FC = () => {
   };
 
   return (
-    <div className="relative w-full h-screen overflow-hidden bg-gradient-to-br from-purple-950 via-indigo-900 to-purple-900 flex items-center justify-center font-sans">
+    <div className="relative w-full h-screen overflow-hidden bg-gradient-to-br from-[#1d1d1d] via-[#162225] to-[#11181a] flex items-center justify-center font-sans">
       {/* Elementos decorativos de fondo estilo gaming / fantasía */}
       <div className="absolute top-10 left-10 w-32 h-32 rounded-full border-4 border-purple-400/20 pointer-events-none" />
-      <div className="absolute bottom-10 left-20 w-48 h-48 rounded-full border-2 border-purple-500/30 pointer-events-none" />
-      <div className="absolute top-20 right-20 w-24 h-24 border-2 border-purple-400/20 rotate-45 pointer-events-none" />
-      <div className="absolute -bottom-10 right-10 w-64 h-64 rounded-full border border-purple-400/10 pointer-events-none" />
+      <div className="absolute bottom-10 left-20 w-48 h-48 rounded-full border-2 border-[#208c8c]/40 pointer-events-none" />
+      <div className="absolute top-20 right-20 w-24 h-24 border-2 border-[#208c8c]/40 rotate-45 pointer-events-none" />
+      <div className="absolute -bottom-10 right-10 w-64 h-64 rounded-full border border-purple-400/15 pointer-events-none" />
 
       <div className="container mx-auto px-6 h-full flex flex-col md:flex-row items-center justify-between relative z-10">
         
@@ -107,7 +107,7 @@ export const LoginPage: React.FC = () => {
         </div>
 
         {/* Lado Derecho: Tarjeta de Login (Glassmorphism) */}
-        <div className="w-full max-w-md bg-purple-950/40 backdrop-blur-xl border border-purple-500/30 p-8 rounded-2xl shadow-2xl shadow-purple-950/50">
+        <div className="w-full max-w-md bg-purple-950/25 backdrop-blur-xl border border-purple-500/30 p-8 rounded-2xl shadow-2xl shadow-purple-950/50">
           
           {error && (
             <div className="mb-4 p-3 rounded-xl bg-red-500/20 border border-red-500/40 text-red-200 text-sm text-center">

@@ -50,7 +50,7 @@ export const GameSelectionPage: React.FC = () => {
   };
 
   return (
-    <div className="min-w-screen min-h-screen bg-gradient-to-br from-purple-950 via-indigo-900 to-purple-900 text-white font-sans p-6 md:p-10 relative overflow-x-hidden">
+    <div className="min-w-screen min-h-screen bg-gradient-to-br from-[#1d1d1d] via-[#162225] to-[#11181a] text-white font-sans p-6 md:p-10 relative overflow-x-hidden">
       {/* Elementos decorativos de fondo */}
       <div className="absolute top-10 left-10 w-48 h-48 rounded-full border-4 border-purple-400/10 pointer-events-none" />
       <div className="absolute bottom-10 right-20 w-72 h-72 rounded-full border-2 border-purple-500/20 pointer-events-none" />
@@ -58,11 +58,11 @@ export const GameSelectionPage: React.FC = () => {
       <div className="max-w-7xl mx-auto relative z-10">
         
         {/* Header estilo dashboard */}
-        <div className="mb-8 bg-purple-950/40 backdrop-blur-xl border border-purple-500/30 p-8 rounded-3xl shadow-2xl">
+        <div className="mb-8 bg-[#273b40]/50 backdrop-blur-xl backdrop-blur-xl border border-[#3c4748] p-8 rounded-3xl shadow-2xl">
           <h1 className="text-4xl md:text-5xl font-bold tracking-wide drop-shadow-lg mb-2">
             Game Selection
           </h1>
-          <p className="text-purple-200 text-lg font-light italic mb-6">
+          <p className="text-[#cae9ea] text-lg font-light italic mb-6">
             Which game map are you exploring today? Select a world to load its interactive layout.
           </p>
 
@@ -73,10 +73,10 @@ export const GameSelectionPage: React.FC = () => {
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               placeholder="Search for a game..."
-              className="w-full px-5 py-3.5 pl-12 rounded-xl bg-purple-900/50 border border-purple-500/30 text-white placeholder-purple-400/60 focus:outline-none focus:border-purple-400 focus:ring-2 focus:ring-purple-400/20 transition-all"
+              className="w-full px-5 py-3.5 pl-12 rounded-xl bg-[#273b40]/50 backdrop-blur-xl border border-[#3c4748] text-white placeholder-[#cae9ea]/40 focus:outline-none focus:border-[#208c8c]/40 focus:ring-2 focus:ring-purple-400/20 transition-all"
             />
             <svg
-              className="absolute left-4 top-4 h-5 w-5 text-purple-400"
+              className="absolute left-4 top-4 h-5 w-5 text-[#cae9ea] pointer-events-none"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -90,7 +90,7 @@ export const GameSelectionPage: React.FC = () => {
         <div>
           <h2 className="text-2xl font-semibold mb-6 text-purple-100 flex items-center gap-3">
             <span>Available Worlds</span>
-            <span className="text-xs bg-purple-600/50 border border-purple-400/30 px-3 py-1 rounded-full text-purple-200">
+            <span className="text-xs bg-purple-600/50 border border-[#208c8c]/40 px-3 py-1 rounded-full text-[#cae9ea]">
               {filteredGames.length} games
             </span>
           </h2>
@@ -100,7 +100,7 @@ export const GameSelectionPage: React.FC = () => {
               <div
                 key={game.id}
                 onClick={() => handleSelectGame(game.id)}
-                className="bg-purple-950/40 backdrop-blur-xl border border-purple-500/30 rounded-2xl overflow-hidden shadow-xl hover:border-purple-400 hover:shadow-purple-600/30 hover:scale-[1.02] transition-all duration-300 cursor-pointer group flex flex-col"
+                className="bg-[#273b40]/50 backdrop-blur-xl backdrop-blur-xl border border-[#208c8c]/40 rounded-2xl overflow-hidden shadow-xl hover:border-[#208c8c]/40 hover:shadow-purple-600/30 hover:scale-[1.02] transition-all duration-300 cursor-pointer group flex flex-col"
               >
                 {/* Imagen de portada */}
                 <div className="relative h-48 overflow-hidden bg-purple-900">
@@ -115,16 +115,16 @@ export const GameSelectionPage: React.FC = () => {
                 {/* Detalles de la tarjeta */}
                 <div className="p-5 flex flex-col flex-grow justify-between">
                   <div>
-                    <h3 className="text-lg font-bold text-white group-hover:text-purple-300 transition-colors">
+                    <h3 className="text-lg font-bold text-white group-hover:text-[#cae9ea]/70 transition-colors">
                       {game.title}
                     </h3>
-                    <p className="text-sm text-purple-300/80 mt-1">
+                    <p className="text-sm text-[#cae9ea]/70/80 mt-1">
                       {game.genre}
                     </p>
                   </div>
 
-                  <div className="mt-4 pt-3 border-t border-purple-500/20 flex items-center justify-between text-xs text-purple-300">
-                    <span className="group-hover:translate-x-1 transition-transform duration-200 flex items-center gap-1 font-semibold text-purple-200">
+                  <div className="mt-4 pt-3 border-t border-[#208c8c]/40 flex items-center justify-between text-xs text-[#cae9ea]/70">
+                    <span className="group-hover:translate-x-1 transition-transform duration-200 flex items-center gap-1 font-semibold text-[#cae9ea]">
                       Explore Map &rarr;
                     </span>
                   </div>
@@ -134,8 +134,8 @@ export const GameSelectionPage: React.FC = () => {
           </div>
 
           {filteredGames.length === 0 && (
-            <div className="text-center py-20 bg-purple-950/20 rounded-2xl border border-purple-500/20">
-              <p className="text-purple-300 text-lg">No games found matching your search.</p>
+            <div className="text-center py-20 bg-purple-950/20 rounded-2xl border border-[#3c4748]">
+              <p className="text-[#cae9ea]/70 text-lg">No games found matching your search.</p>
             </div>
           )}
         </div>
