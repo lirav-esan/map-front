@@ -17,6 +17,7 @@ export interface MapNode {
   position: LatLngExpression
   content: ReactNode
   category?: string
+  group?: string
   title?: string
   checked?: boolean
   iconUrl?: string
@@ -103,7 +104,7 @@ function GameMap({
           label: categoryId,
           count: 0,
           visible: true,
-          group: 'Other',
+          group: node.group ?? 'Other',
         })
       }
     })
@@ -171,7 +172,7 @@ function GameMap({
                 zoom={2}
                 zoomControl={false}
                 crs={L.CRS.Simple}
-                style={{ height: '100%', width: '100%' }}
+                style={{ height: '100%', width: '100%', backgroundColor: '#313131' }}
                 minZoom={0}
                 maxZoom={3}
                 scrollWheelZoom

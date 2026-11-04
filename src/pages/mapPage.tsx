@@ -1,44 +1,59 @@
 import GameMap from '../components/GameMap'
-import {
-  SHRINE_RUINS_FILTERS,
-  SHRINE_RUINS_LOCATIONS,
-} from '../data/shrineRuinsLocations'
-import exampleMapImage from '../assets/shrine_ruins_map.jpg'
+import ShrineMapImage from '../assets/shrine_ruins_map.jpg'
+import WuWaMapImage from '../assets/wuwa.gif'
 import { useParams } from 'react-router-dom'
 import { ComingSoonPage } from './comingSoon';
+import { useEffect, useState } from 'react'
+import { fetchMapData, type MapData } from '../services/mapApi'
 
+const MAP_CONFIGS = {
+    'monster-hunter': {
+        name: 'Monster Hunter Rise (Shrine Ruins)',
+        image: ShrineMapImage,
+        apiGameId: 1,
+        cacheDays: 7,
+    },
+    'wuthering-waves': {
+        name: 'Wuthering Waves',
+        image: WuWaMapImage,
+        apiGameId: 2,
+        cacheDays: 7,
+    },
+} as const
 
 export default function MapPage() {
     const { gameId } = useParams();
+    const currentMap = gameId ? MAP_CONFIGS[gameId as keyof typeof MAP_CONFIGS] : undefined
+    const [mapData, setMapData] = useState<MapData | null>(null)
+    const [error, setError] = useState<string | null>(null)
+    const [loading, setLoading] = useState(true)
 
-    const getMapConfig = () => {
-        switch (gameId) {
-            case 'monster-hunter':
-                return {
-                    name: "Shrine Ruins",
-                    image: exampleMapImage,
-                    children: SHRINE_RUINS_LOCATIONS,
-                    filterCategories: SHRINE_RUINS_FILTERS
-                };
-            case 'wuthering-waves':
-            case 'honkai-star-rail':
-            case 'babys-nightmare':
-            default:
-                return null;
-
-            //más casos agregar acá (Zelda, genshin, etc)
-        }
-    };
-    //debug para verificar id del juego (QUITAR LUEGOO)
-    console.log("ID del juego seleccionado:", gameId);
-
-    const currentMap = getMapConfig()!;
-    //el simbolito ! es para q typescript no se queje de q currentMap puede ser undefined
-    // pero en realidad nunca lo va a ser porque el id del juego siempre va a ser uno de los casos del switch
-    //(NO QUITAR EL ! XQ APARECEN ERRORES DE UNDEFINED)
+    useEffect(() => {
+        if (!currentMap || !gameId) return
+        let cancelled = false
+        fetchMapData({ gameId, apiGameId: currentMap.apiGameId, cacheDays: currentMap.cacheDays })
+            .then((data) => {
+                if (!cancelled) setMapData(data)
+            })
+            .catch((cause: unknown) => {
+                if (!cancelled) {
+                    setError(cause instanceof Error ? cause.message : 'No se pudieron cargar los datos del mapa.')
+                }
+            })
+            .finally(() => {
+                if (!cancelled) setLoading(false)
+            })
+        return () => { cancelled = true }
+    }, [currentMap, gameId])
 
     if (!currentMap) {
         return <ComingSoonPage />;
+    }
+    if (loading) {
+        return <main className="app p-8 text-white">Cargando datos del mapa…</main>
+    }
+    if (error || !mapData) {
+        return <main className="app p-8 text-red-200" role="alert">{error ?? 'No se pudieron cargar los datos del mapa.'}</main>
     }
 
     return (
@@ -46,8 +61,8 @@ export default function MapPage() {
         <GameMap
             name={currentMap.name}
             image={currentMap.image}
-            children={currentMap.children}
-            filterCategories={currentMap.filterCategories}
+            children={mapData.markers}
+            filterCategories={mapData.categories}
         />
         </main>
     );
