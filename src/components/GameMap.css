@@ -253,6 +253,23 @@
  border: 0;
 }
 
+html[data-high-contrast='true'] .app-preferences .game-map__header,
+html[data-high-contrast='true'] .app-preferences .game-map__viewport,
+html[data-high-contrast='true'] .app-preferences .map-filters {
+ background: #000;
+ border-color: #fff;
+ color: #fff;
+}
+
+html[data-high-contrast='true'] .app-preferences .map-filters__select button,
+html[data-high-contrast='true'] .app-preferences .map-filters__search input,
+html[data-high-contrast='true'] .app-preferences .map-filters__actions button,
+html[data-high-contrast='true'] .app-preferences .game-map__controls button {
+ color: #fff;
+ background: #000;
+ border-color: #fff;
+}
+
 @media (max-width: 640px) {
   .game-map__header {
     padding: 1rem;

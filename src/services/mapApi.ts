@@ -2,8 +2,8 @@ import type { MapNode } from '../components/GameMap'
 import type { MapFilterCategory } from '../components/MapFilters'
 
 const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:5261/api').replace(/\/+$/, '')
-// Version 2 separates category caches after adding the game filter to the request.
-const CACHE_VERSION = 2
+// Version 3 aligns markers with the concrete categories returned by the summary.
+const CACHE_VERSION = 3
 
 export interface MapApiConfig {
   gameId: string
@@ -116,6 +116,10 @@ function normalizeCategories(value: unknown): MapFilterCategory[] {
   })
 }
 
+function normalizeCategoryKey(value: string) {
+  return value.trim().toLocaleLowerCase()
+}
+
 export async function fetchMapData(config: MapApiConfig): Promise<MapData> {
   const maxAgeMs = config.cacheDays * 24 * 60 * 60 * 1000
   const markerKey = getCacheKey(config.gameId, 'markers')
@@ -139,12 +143,15 @@ export async function fetchMapData(config: MapApiConfig): Promise<MapData> {
   const markers = normalizeMarkers(markersResponse)
   const categories = normalizeCategories(categoriesResponse)
   const categoriesByName = new Map(
-    categories.map((category) => [category.label.toLocaleLowerCase(), category]),
+    categories.map((category) => [normalizeCategoryKey(category.label), category]),
   )
   const normalizedMarkers = markers.map((marker) => {
-    if (!marker.category) return marker
-    const category = categoriesByName.get(marker.category.toLocaleLowerCase())
-    return category ? { ...marker, category: category.id, group: marker.group ?? category.group } : marker
+    const category = marker.title
+      ? categoriesByName.get(normalizeCategoryKey(marker.title))
+      : undefined
+    return category
+      ? { ...marker, category: category.id, group: marker.group ?? category.group }
+      : marker
   })
   writeCache(markerKey, normalizedMarkers)
   writeCache(categoryKey, categories)
