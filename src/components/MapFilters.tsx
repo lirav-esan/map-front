@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useUserSettings } from '../hooks/useUserSettings'
 
 export interface MapFilterCategory {
   id: string
@@ -7,27 +8,6 @@ export interface MapFilterCategory {
   visible: boolean
   group?: string
 }
-
-/**
- * Categorías y cantidades mostradas por el mapa de Shrine Ruins.
- * El HTML exportado contiene este catálogo a través del mapa remoto, pero no
- * incluye las coordenadas de los pins.
- */
-export const SHRINE_RUINS_FILTERS: MapFilterCategory[] = [
-  { id: 'camp', label: 'Camp', count: 2, visible: true, group: 'Locale' },
-  { id: 'relic-records', label: 'Relic Records', count: 10, visible: true, group: 'Locale' },
-  { id: 'rampage-messages', label: 'Rampage Messages', count: 2, visible: true, group: 'Locale' },
-  { id: 'jewel-lilies', label: 'Jewel Lilies', count: 14, visible: true, group: 'Locale' },
-  { id: 'buddy-recon', label: 'Buddy Recon', count: 2, visible: true, group: 'Locale' },
-  { id: 'fishing-spots', label: 'Fishing Spots', count: 1, visible: true, group: 'Locale' },
-  { id: 'special-items', label: 'Special Items', count: 26, visible: true, group: 'Items' },
-  { id: 'junk-piles', label: 'Junk Piles', count: 1, visible: true, group: 'Items' },
-  { id: 'melynx-gatherings', label: "Melynx's Gatherings", count: 1, visible: true, group: 'Items' },
-  { id: 'permabuffers', label: 'Permabuffers', count: 1, visible: true, group: 'Endemic Life' },
-  { id: 'hunting-helpers', label: 'Hunting Helpers', count: 1, visible: true, group: 'Endemic Life' },
-  { id: 'endemic-life', label: 'Endemic Life', count: 1, visible: true, group: 'Endemic Life' },
-  { id: 'adamant-seed', label: 'Adamant Seed', count: 3, visible: true, group: 'Materials' },
-]
 
 interface MapFiltersProps {
   categories: MapFilterCategory[]
@@ -54,23 +34,39 @@ function MapFilters({
   onShowAll,
   onHideAll,
 }: MapFiltersProps) {
-  const [collapsed, setCollapsed] = useState(false)
+  const [collapsedGroups, setCollapsedGroups] = useState<Set<string>>(new Set())
+  const { settings } = useUserSettings()
+  const isEnglish = settings.language === 'en'
+  const userOpacity = settings.minimapOpacity / 100
+  const text = isEnglish
+    ? {
+        filters: 'Map filters', currentMap: 'Current map', changeMap: 'Change map',
+        map: 'Game map', search: 'Search point of interest', searchPlaceholder: 'Search objective',
+        hideChecked: 'Hide marked points', titles: 'Show titles', showAll: 'Show all',
+        hideAll: 'Hide all', other: 'Other',
+      }
+    : {
+        filters: 'Filtros del mapa', currentMap: 'Mapa actual', changeMap: 'Cambiar mapa',
+        map: 'Mapa de juego', search: 'Buscar punto de interés', searchPlaceholder: 'Buscar objetivo',
+        hideChecked: 'Ocultar puntos marcados', titles: 'Mostrar títulos', showAll: 'Mostrar todo',
+        hideAll: 'Ocultar todo', other: 'Otros',
+      }
 
   return (
-    <aside className="map-filters" aria-label="Filtros del mapa">
+    <aside className="map-filters" aria-label={text.filters} style={{ opacity: userOpacity}}>
       <div className="map-filters__select">
-        <span>Mapa actual</span>
-        <button type="button" aria-label="Cambiar mapa">
-          <strong>Mapa de juego</strong>
+        <span>{text.currentMap}</span>
+        <button type="button" aria-label={text.changeMap}>
+          <strong>{text.map}</strong>
           <span aria-hidden="true">⌄</span>
         </button>
       </div>
 
       <label className="map-filters__search">
-        <span className="sr-only">Buscar punto de interés</span>
+        <span className="sr-only">{text.search}</span>
         <input
           type="search"
-          placeholder="Buscar objetivo"
+          placeholder={text.searchPlaceholder}
           value={search}
           onChange={(event) => onSearchChange(event.target.value)}
         />
@@ -79,14 +75,14 @@ function MapFilters({
       <div className="map-filters__options">
         <button type="button" onClick={onToggleChecked}>
           <span aria-hidden="true">◈</span>
-          Ocultar puntos marcados
+          {text.hideChecked}
           <span className={`map-filters__switch ${hideChecked ? 'is-on' : ''}`}>
             <span />
           </span>
         </button>
         <button type="button" onClick={onToggleTitles}>
           <span aria-hidden="true">◆</span>
-          Mostrar títulos
+          {text.titles}
           <span className={`map-filters__switch ${displayTitles ? 'is-on' : ''}`}>
             <span />
           </span>
@@ -94,19 +90,26 @@ function MapFilters({
       </div>
 
       <div className="map-filters__actions">
-        <button type="button" onClick={onShowAll}>Mostrar todo</button>
-        <button type="button" onClick={onHideAll}>Ocultar todo</button>
+        <button type="button" onClick={onShowAll}>{text.showAll}</button>
+        <button type="button" onClick={onHideAll}>{text.hideAll}</button>
       </div>
 
-      {Array.from(new Set(categories.map((category) => category.group ?? 'Other'))).map((group) => (
-        <div className="map-filters__section" key={group}>
+      {Array.from(new Set(categories.map((category) => category.group ?? 'Other'))).map((group) => {
+        const collapsed = collapsedGroups.has(group)
+        return (
+          <div className="map-filters__section" key={group}>
           <button
             type="button"
             className="map-filters__section-title"
-            onClick={() => setCollapsed((value) => !value)}
+            onClick={() => setCollapsedGroups((current) => {
+              const next = new Set(current)
+              if (next.has(group)) next.delete(group)
+              else next.add(group)
+              return next
+            })}
             aria-expanded={!collapsed}
           >
-            {group}
+            {group === 'Other' ? text.other : group}
             <span aria-hidden="true">{collapsed ? '⌄' : '⌃'}</span>
           </button>
           {!collapsed && (
@@ -127,8 +130,9 @@ function MapFilters({
               ))}
             </ul>
           )}
-        </div>
-      ))}
+          </div>
+        )
+      })}
     </aside>
   )
 }
