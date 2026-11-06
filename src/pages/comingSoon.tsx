@@ -1,11 +1,14 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useUserSettings } from '../hooks/useUserSettings';
 
 export const ComingSoonPage: React.FC = () => {
   const navigate = useNavigate();
+  const { settings } = useUserSettings();
+  const isEnglish = settings.language === 'en';
 
   return (
-    <div className="relative w-full h-screen overflow-hidden bg-gradient-to-br from-[#1d1d1d] via-[#162225] to-[#11181a] flex items-center justify-center font-sans text-white p-6">
+    <div className="app-preferences relative w-full h-screen overflow-hidden bg-gradient-to-br from-[#1d1d1d] via-[#162225] to-[#11181a] flex items-center justify-center font-sans text-white p-6">
       {/* Elementos decorativos de fondo */}
       <div className="absolute top-10 left-10 w-32 h-32 rounded-full border-4 border-[#208c8c]/20 pointer-events-none" />
       <div className="absolute bottom-10 right-20 w-48 h-48 rounded-full border-2 border-[#208c8c]/30 pointer-events-none" />
@@ -23,10 +26,12 @@ export const ComingSoonPage: React.FC = () => {
 
         <div>
           <h1 className="text-3xl font-bold tracking-wide mb-2 drop-shadow-md">
-            Oops, we still have some work to do!
+            {isEnglish ? 'Oops, we still have some work to do!' : '¡Aún tenemos trabajo por hacer!'}
           </h1>
           <p className="text-purple-200 text-sm font-light italic leading-relaxed">
-            We're currently building this map, please check back later for updates. In the meantime, feel free to explore our other available worlds or return to the game selection page.
+            {isEnglish
+              ? "We're currently building this map. Please check back later for updates. In the meantime, feel free to explore our other available worlds or return to game selection."
+              : 'Estamos construyendo este mapa. Vuelve más tarde para consultar las novedades o explora otros mundos disponibles.'}
           </p>
         </div>
 
@@ -35,7 +40,7 @@ export const ComingSoonPage: React.FC = () => {
           onClick={() => navigate('/gameSelection')}
           className="w-full py-3.5 px-4 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-semibold shadow-lg shadow-purple-600/30 transition-all duration-200 transform active:scale-[0.98] cursor-pointer"
         >
-          Volver a Selección de Juegos
+          {isEnglish ? 'Back to Game Selection' : 'Volver a selección de juegos'}
         </button>
 
       </div>

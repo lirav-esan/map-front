@@ -24,3 +24,37 @@ body,
   min-height: 100%;
   margin: 0;
 }
+
+html[data-reduced-motion='true'] *,
+html[data-reduced-motion='true'] *::before,
+html[data-reduced-motion='true'] *::after {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  scroll-behavior: auto !important;
+  transition-duration: 0.01ms !important;
+}
+
+html[data-high-contrast='true'] {
+  filter: contrast(1.2);
+}
+
+html[data-high-contrast='true'] .app-preferences {
+  color: #fff !important;
+  background: #000 !important;
+}
+
+html[data-high-contrast='true'] .app-preferences [class*='bg-[#273b40'],
+html[data-high-contrast='true'] .app-preferences [class*='bg-purple-'],
+html[data-high-contrast='true'] .app-preferences [class*='bg-[#1d1d1d'] {
+  background: #000 !important;
+}
+
+html[data-high-contrast='true'] .app-preferences [class*='border-[#3c4748'],
+html[data-high-contrast='true'] .app-preferences [class*='border-purple-'] {
+  border-color: #fff !important;
+}
+
+html[data-high-contrast='true'] .app-preferences [class*='text-[#cae9ea'],
+html[data-high-contrast='true'] .app-preferences [class*='text-purple-'] {
+  color: #fff !important;
+}

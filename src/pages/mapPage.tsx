@@ -5,6 +5,7 @@ import { useParams, useNavigate } from 'react-router-dom'
 import { ComingSoonPage } from './comingSoon';
 import { useEffect, useState } from 'react'
 import { fetchMapData, type MapData } from '../services/mapApi'
+import { useUserSettings } from '../hooks/useUserSettings'
 
 const MAP_CONFIGS = {
     'monster-hunter': {
@@ -24,6 +25,8 @@ const MAP_CONFIGS = {
 export default function MapPage() {
     const { gameId } = useParams();
     const navigate = useNavigate();
+    const { settings } = useUserSettings()
+    const isEnglish = settings.language === 'en'
     const currentMap = gameId ? MAP_CONFIGS[gameId as keyof typeof MAP_CONFIGS] : undefined
     const [mapData, setMapData] = useState<MapData | null>(null)
     const [error, setError] = useState<string | null>(null)
@@ -51,10 +54,10 @@ export default function MapPage() {
         return <ComingSoonPage />;
     }
     if (loading) {
-        return <main className="app p-8 text-white">Cargando datos del mapa…</main>
+        return <main className="app app-preferences p-8 text-white">{isEnglish ? 'Loading map data…' : 'Cargando datos del mapa…'}</main>
     }
     if (error || !mapData) {
-        return <main className="app p-8 text-red-200" role="alert">{error ?? 'No se pudieron cargar los datos del mapa.'}</main>
+        return <main className="app app-preferences p-8 text-red-200" role="alert">{error ?? (isEnglish ? 'Map data could not be loaded.' : 'No se pudieron cargar los datos del mapa.')}</main>
     }
 
     return (

@@ -11,6 +11,7 @@ import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
 import './GameMap.css'
 import MapFilters, { type MapFilterCategory } from './MapFilters'
+import { useUserSettings } from '../hooks/useUserSettings'
 
 export interface MapNode {
   id: string
@@ -36,6 +37,8 @@ export interface GameMapProps {
 
 function ZoomControls() {
   const map = useMap()
+  const { settings } = useUserSettings()
+  const isEnglish = settings.language === 'en'
 
   const toggleFullscreen = async () => {
     const container = map.getContainer()
@@ -48,17 +51,17 @@ function ZoomControls() {
   }
 
   return (
-    <div className="game-map__controls leaflet-control" aria-label="Controles del mapa">
-      <button type="button" onClick={() => map.zoomIn()} aria-label="Acercar mapa">
+    <div className="game-map__controls leaflet-control" aria-label={isEnglish ? 'Map controls' : 'Controles del mapa'}>
+      <button type="button" onClick={() => map.zoomIn()} aria-label={isEnglish ? 'Zoom in' : 'Acercar mapa'}>
         +
       </button>
-      <button type="button" onClick={() => map.zoomOut()} aria-label="Alejar mapa">
+      <button type="button" onClick={() => map.zoomOut()} aria-label={isEnglish ? 'Zoom out' : 'Alejar mapa'}>
         −
       </button>
       <button
         type="button"
         onClick={toggleFullscreen}
-        aria-label="Mostrar mapa en pantalla completa"
+        aria-label={isEnglish ? 'Show map in fullscreen' : 'Mostrar mapa en pantalla completa'}
       >
         ⛶
       </button>
@@ -85,6 +88,8 @@ function GameMap({
   filterCategories = [],
   className = '',
 }: GameMapProps) {
+  const { settings } = useUserSettings()
+  const isEnglish = settings.language === 'en'
   const bounds: LatLngBoundsExpression = [[0, 0], [256, 256]]
   const nodes = useMemo(() => children.map(toMapNode), [children])
   const [search, setSearch] = useState('')
@@ -139,7 +144,7 @@ function GameMap({
   }
 
   return (
-    <div className="min-w-screen min-h-screen bg-gradient-to-br from-[#1d1d1d] via-[#162225] to-[#11181a] relative overflow-x-hidden">
+    <div className="app-preferences min-w-screen min-h-screen bg-gradient-to-br from-[#1d1d1d] via-[#162225] to-[#11181a] relative overflow-x-hidden">
 
       {/* Elementos decorativos de fondo */}
       <div className="absolute top-10 left-10 w-48 h-48 rounded-full border-4 border-purple-400/10 pointer-events-none" />
@@ -147,7 +152,7 @@ function GameMap({
 
       <div className="max-w-7xl mx-auto relative z-10">
 
-        <section className={`game-map ${className}`.trim()} aria-label={`Mapa de ${name}`}>
+        <section className={`game-map ${className}`.trim()} aria-label={`${isEnglish ? 'Map' : 'Mapa'} ${name}`}>
           <header className="game-map__header">
             <h1 className="game-map__title">{name}</h1>
           </header>
