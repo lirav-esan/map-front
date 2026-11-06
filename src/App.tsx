@@ -4,6 +4,8 @@ import RegisterPage from './pages/registerPage'
 import GameSelectionPage from './pages/gameSelection'
 import MapPage from './pages/mapPage'
 import ComingSoonPage from './pages/comingSoon'
+import SettingsPage from './pages/settingsPage'
+import ProfilePage from './pages/profilePage'
 
 export default function App() {
   return (
@@ -14,6 +16,8 @@ export default function App() {
       <Route path="/gameSelection" element={<GameSelectionPage />} />
       <Route path="/map/:gameId" element={<MapPage />} />
       <Route path="/comingSoon" element={<ComingSoonPage />} />
+      <Route path="/settings" element={<SettingsPage />} />
+      <Route path="/profile" element={<ProfilePage />} />
     </Routes>
   )
 }
