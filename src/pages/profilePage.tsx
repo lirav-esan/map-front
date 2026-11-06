@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useUserSettings } from '../hooks/useUserSettings';
 
 // Datos hardcodeados iniciales para favoritos y progreso (listos para mapear a la BD en el futuro)
 interface FavoriteMap {
@@ -40,6 +41,22 @@ const MAP_PROGRESS_DATA: MapProgress[] = [
 
 export const ProfilePage: React.FC = () => {
   const navigate = useNavigate();
+  const { settings } = useUserSettings();
+  const isEnglish = settings.language === 'en';
+  const text = isEnglish
+    ? {
+        back: 'Back', edit: 'Edit Profile', cancel: 'Cancel', account: 'Account Settings',
+        username: 'Username', email: 'Email', save: 'Save Changes', worlds: 'Mapped Worlds',
+        rank: 'User Rank', status: 'System Status', favorites: 'Favorite Maps', saved: 'saved',
+        progress: 'Exploration Progress', collectibles: 'collectibles',
+      }
+    : {
+        back: 'Volver', edit: 'Editar Perfil', cancel: 'Cancelar', account: 'Configuración de cuenta',
+        username: 'Nombre de usuario', email: 'Correo electrónico', save: 'Guardar cambios',
+        worlds: 'Mundos mapeados', rank: 'Rango de usuario', status: 'Estado del sistema',
+        favorites: 'Mapas favoritos', saved: 'guardados', progress: 'Progreso de exploración',
+        collectibles: 'coleccionables',
+      };
   const [username, setUsername] = useState(localStorage.getItem('username') || 'Explorer');
   const [email, setEmail] = useState(localStorage.getItem('email') || 'explorer@rog.com');
   const [isEditing, setIsEditing] = useState(false);
@@ -55,7 +72,7 @@ export const ProfilePage: React.FC = () => {
   };
 
   return (
-    <div className="min-w-screen min-h-screen bg-gradient-to-br from-[#1d1d1d] via-[#162225] to-[#11181a] text-[#cae9ea] font-sans p-6 md:p-10 relative overflow-x-hidden">
+    <div className="app-preferences min-w-screen min-h-screen bg-gradient-to-br from-[#1d1d1d] via-[#162225] to-[#11181a] text-[#cae9ea] font-sans p-6 md:p-10 relative overflow-x-hidden">
       
       {/* Botón de retroceso flotante */}
       <button
@@ -65,7 +82,7 @@ export const ProfilePage: React.FC = () => {
         <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
         </svg>
-        <span className="text-sm font-medium hidden sm:inline">Volver</span>
+        <span className="text-sm font-medium hidden sm:inline">{text.back}</span>
       </button>
 
       {/* Elementos decorativos tecnológicos de fondo */}
@@ -108,7 +125,7 @@ export const ProfilePage: React.FC = () => {
               onClick={() => setIsEditing(!isEditing)}
               className="px-6 py-2.5 rounded-xl bg-[#208c8c]/30 border border-[#208c8c] hover:bg-[#208c8c] text-[#cae9ea] hover:text-white font-semibold transition-all shadow-md cursor-pointer"
             >
-              {isEditing ? 'Cancelar' : 'Editar Perfil'}
+              {isEditing ? text.cancel : text.edit}
             </button>
           </div>
         </div>
@@ -116,10 +133,10 @@ export const ProfilePage: React.FC = () => {
         {/* Formulario de edición o Estadísticas rápidas */}
         {isEditing ? (
           <div className="bg-[#273b40]/50 backdrop-blur-2xl border border-[#3c4748] p-8 rounded-3xl shadow-2xl">
-            <h2 className="text-xl font-bold text-white mb-6">Configuración de Cuenta</h2>
+            <h2 className="text-xl font-bold text-white mb-6">{text.account}</h2>
             <form onSubmit={handleSave} className="space-y-5">
               <div>
-                <label className="block text-sm font-medium text-[#cae9ea]/80 mb-2">Nombre de Usuario</label>
+                <label className="block text-sm font-medium text-[#cae9ea]/80 mb-2">{text.username}</label>
                 <input
                   type="text"
                   value={username}
@@ -129,7 +146,7 @@ export const ProfilePage: React.FC = () => {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-[#cae9ea]/80 mb-2">Correo Electrónico</label>
+                <label className="block text-sm font-medium text-[#cae9ea]/80 mb-2">{text.email}</label>
                 <input
                   type="email"
                   value={email}
@@ -142,7 +159,7 @@ export const ProfilePage: React.FC = () => {
                 type="submit"
                 className="w-full py-3.5 rounded-xl bg-gradient-to-r from-[#208c8c] to-[#176666] hover:from-[#25a0a0] hover:to-[#208c8c] text-white font-bold shadow-lg shadow-[#208c8c]/20 transition-all cursor-pointer"
               >
-                Guardar Cambios
+                {text.save}
               </button>
             </form>
           </div>
@@ -150,15 +167,15 @@ export const ProfilePage: React.FC = () => {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div className="bg-[#273b40]/50 backdrop-blur-xl border border-[#3c4748] p-6 rounded-2xl shadow-xl text-center">
               <span className="text-3xl font-bold text-[#208c8c] block mb-1">03</span>
-              <span className="text-xs text-[#cae9ea]/70 uppercase tracking-wider">Mundos Mapeados</span>
+              <span className="text-xs text-[#cae9ea]/70 uppercase tracking-wider">{text.worlds}</span>
             </div>
             <div className="bg-[#273b40]/50 backdrop-blur-xl border border-[#3c4748] p-6 rounded-2xl shadow-xl text-center">
               <span className="text-3xl font-bold text-[#208c8c] block mb-1">PRO</span>
-              <span className="text-xs text-[#cae9ea]/70 uppercase tracking-wider">Rango de Usuario</span>
+              <span className="text-xs text-[#cae9ea]/70 uppercase tracking-wider">{text.rank}</span>
             </div>
             <div className="bg-[#273b40]/50 backdrop-blur-xl border border-[#3c4748] p-6 rounded-2xl shadow-xl text-center">
               <span className="text-3xl font-bold text-[#208c8c] block mb-1">ONLINE</span>
-              <span className="text-xs text-[#cae9ea]/70 uppercase tracking-wider">Estado del Sistema</span>
+              <span className="text-xs text-[#cae9ea]/70 uppercase tracking-wider">{text.status}</span>
             </div>
           </div>
         )}
@@ -166,9 +183,9 @@ export const ProfilePage: React.FC = () => {
         {/* SECCIÓN: MAPAS FAVORITOS */}
         <div className="bg-[#273b40]/50 backdrop-blur-2xl border border-[#3c4748] p-8 rounded-3xl shadow-2xl">
           <h2 className="text-xl font-bold text-white mb-6 flex items-center justify-between">
-            <span>Mapas Favoritos</span>
+            <span>{text.favorites}</span>
             <span className="text-xs font-mono bg-[#208c8c]/20 text-[#208c8c] border border-[#208c8c]/40 px-3 py-1 rounded-full">
-              {FAVORITE_MAPS.length} guardados
+              {FAVORITE_MAPS.length} {text.saved}
             </span>
           </h2>
 
@@ -194,14 +211,14 @@ export const ProfilePage: React.FC = () => {
 
         {/* SECCIÓN: PROGRESO POR CADA MAPA */}
         <div className="bg-[#273b40]/50 backdrop-blur-2xl border border-[#3c4748] p-8 rounded-3xl shadow-2xl">
-          <h2 className="text-xl font-bold text-white mb-6">Progreso de Exploración</h2>
+          <h2 className="text-xl font-bold text-white mb-6">{text.progress}</h2>
 
           <div className="space-y-6">
             {MAP_PROGRESS_DATA.map((prog) => (
               <div key={prog.id} className="space-y-2">
                 <div className="flex justify-between items-center text-sm">
                   <span className="font-semibold text-white">{prog.title}</span>
-                  <span className="text-xs font-mono text-[#208c8c]">{prog.discovered} / {prog.total} coleccionables ({prog.percentage}%)</span>
+                  <span className="text-xs font-mono text-[#208c8c]">{prog.discovered} / {prog.total} {text.collectibles} ({prog.percentage}%)</span>
                 </div>
                 {/* Barra de Progreso Holográfica */}
                 <div className="w-full h-3 bg-[#1d1d1d] rounded-full overflow-hidden border border-[#3c4748] p-0.5">
