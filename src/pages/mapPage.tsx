@@ -1,7 +1,7 @@
 import GameMap from '../components/GameMap'
 import ShrineMapImage from '../assets/shrine_ruins_map.jpg'
 import WuWaMapImage from '../assets/wuwa.gif'
-import { useParams } from 'react-router-dom'
+import { useParams, useNavigate } from 'react-router-dom'
 import { ComingSoonPage } from './comingSoon';
 import { useEffect, useState } from 'react'
 import { fetchMapData, type MapData } from '../services/mapApi'
@@ -23,6 +23,7 @@ const MAP_CONFIGS = {
 
 export default function MapPage() {
     const { gameId } = useParams();
+    const navigate = useNavigate();
     const currentMap = gameId ? MAP_CONFIGS[gameId as keyof typeof MAP_CONFIGS] : undefined
     const [mapData, setMapData] = useState<MapData | null>(null)
     const [error, setError] = useState<string | null>(null)
@@ -57,7 +58,16 @@ export default function MapPage() {
     }
 
     return (
-        <main className="app">
+        <main className="app relative">
+            <button
+                onClick={() => navigate('/gameSelection')}
+                className="absolute top-4 left-4 z-50 p-3 rounded-xl bg-[#273b40]/80 backdrop-blur-md border border-[#3c4748] text-[#cae9ea] hover:bg-[#208c8c]/40 hover:border-[#208c8c] transition-all shadow-lg cursor-pointer flex items-center justify-center"
+                title="Volver a selección de juegos"
+            >
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                </svg>
+            </button>
         <GameMap
             name={currentMap.name}
             image={currentMap.image}
