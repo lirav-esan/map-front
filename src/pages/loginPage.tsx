@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { GoogleLogin } from '@react-oauth/google';
+import HCaptcha from '@hcaptcha/react-hcaptcha';
 
 export const LoginPage: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -10,6 +11,8 @@ export const LoginPage: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
+  const captchaRef = useRef<HCaptcha>(null);
 
   //login tradicional
   const handleSubmit = async (e: React.FormEvent) => {
@@ -17,13 +20,18 @@ export const LoginPage: React.FC = () => {
     setError('');
     setLoading(true);
 
+    if (!captchaToken) {
+      setError('Por favor, completa la verificación de seguridad.');
+      return;
+    }
+
     try {
       const response = await fetch('http://localhost:5261/api/auth/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ email, password, captchaToken }),
       });
 
       if (!response.ok) {
@@ -46,6 +54,8 @@ export const LoginPage: React.FC = () => {
       navigate('/gameSelection');
     } catch (err: any) {
       setError(err.message || 'Credenciales inválidas o error de conexión.');
+      captchaRef.current?.resetCaptcha();
+      setCaptchaToken(null);
     } finally {
       setLoading(false);
     }
@@ -178,6 +188,17 @@ export const LoginPage: React.FC = () => {
                 />
                 <span className="text-sm text-purple-200">Remember me</span>
               </label>
+            </div>
+
+            {/* Componente hCaptcha con tema oscuro */}
+            <div className="flex justify-center my-4">
+              <HCaptcha
+                sitekey="e27424a4-bb16-4106-ac6a-b10a7a6023ee"
+                onVerify={(token) => setCaptchaToken(token)}
+                onExpire={() => setCaptchaToken(null)}
+                ref={captchaRef}
+                theme="dark"
+              />
             </div>
 
             {/* Botón Sign In */}
