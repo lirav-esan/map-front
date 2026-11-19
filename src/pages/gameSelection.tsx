@@ -79,7 +79,7 @@ export const GameSelectionPage: React.FC = () => {
 
   const handleSelectGame = (gameId: string) => {
     // Redirige al mapa respectivo usando el ID del juego seleccionado
-    navigate(`/map/${gameId}`);
+    navigate(`/map-front/map/${gameId}`);
   };
 
   const handleLogout = () => {
@@ -87,7 +87,7 @@ export const GameSelectionPage: React.FC = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('username');
     localStorage.removeItem('email');
-    navigate('/login');
+    navigate('/map-front/login');
   };
 
   return (
@@ -124,7 +124,7 @@ export const GameSelectionPage: React.FC = () => {
               <button
                 onClick={() => {
                   setIsProfileMenuOpen(false);
-                  navigate('/profile');
+                  navigate('/map-front/profile');
                 }}
                 className="w-full text-left px-4 py-2.5 text-sm text-[#cae9ea] hover:bg-[#208c8c]/20 transition-colors flex items-center gap-2"
               >
@@ -137,7 +137,7 @@ export const GameSelectionPage: React.FC = () => {
               <button
                 onClick={() => {
                   setIsProfileMenuOpen(false);
-                  navigate('/settings');
+                  navigate('/map-front/settings');
                 }}
                 className="w-full text-left px-4 py-2.5 text-sm text-[#cae9ea] hover:bg-[#208c8c]/20 transition-colors flex items-center gap-2"
               >

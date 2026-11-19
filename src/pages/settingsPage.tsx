@@ -68,7 +68,7 @@ export const SettingsPage: React.FC = () => {
       
       {/* Botón de retroceso flotante */}
       <button
-        onClick={() => navigate('/gameSelection')}
+        onClick={() => navigate('/map-front/gameSelection')}
         aria-label={text.back}
         className={`absolute top-6 left-6 z-50 p-3 rounded-xl backdrop-blur-xl border text-inherit hover:bg-[#208c8c]/30 hover:border-[#208c8c] transition-all shadow-lg cursor-pointer flex items-center gap-2 ${panelClass}`}
       >

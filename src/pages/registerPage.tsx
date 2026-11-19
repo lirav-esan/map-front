@@ -39,7 +39,7 @@ export const RegisterPage: React.FC = () => {
       localStorage.setItem('email', data.email);
 
       // Redirigir al dashboard
-      navigate('/gameSelection');
+      navigate('/map-front/gameSelection');
     } catch (err: any) {
       setError(err.message || 'No se pudo completar el registro.');
     } finally {
@@ -72,7 +72,7 @@ export const RegisterPage: React.FC = () => {
       localStorage.setItem('username', data.username);
       localStorage.setItem('email', data.email);
 
-      navigate('/gameSelection');
+      navigate('/map-front/gameSelection');
     } catch (err: any) {
       setError(err.message || 'No se pudo completar el registro con Google.');
     } finally {
@@ -208,7 +208,7 @@ export const RegisterPage: React.FC = () => {
             <div className="pt-2 text-center text-sm">
               <p className="text-purple-300">
                 Already have an account?{' '}
-                <a href="/login" className="text-white font-semibold underline hover:text-purple-200 transition-colors">
+                <a href="/map-front/login" className="text-white font-semibold underline hover:text-purple-200 transition-colors">
                   Sign In
                 </a>
               </p>

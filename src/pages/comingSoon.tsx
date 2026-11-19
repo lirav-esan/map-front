@@ -37,7 +37,7 @@ export const ComingSoonPage: React.FC = () => {
 
         {/* Botón para regresar al dashboard */}
         <button
-          onClick={() => navigate('/gameSelection')}
+          onClick={() => navigate('/map-front/gameSelection')}
           className="w-full py-3.5 px-4 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-semibold shadow-lg shadow-purple-600/30 transition-all duration-200 transform active:scale-[0.98] cursor-pointer"
         >
           {isEnglish ? 'Back to Game Selection' : 'Volver a selección de juegos'}
