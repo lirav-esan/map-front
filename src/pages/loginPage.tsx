@@ -233,11 +233,11 @@ export const LoginPage: React.FC = () => {
             <div className="flex flex-col space-y-3 pt-2 text-center text-sm">
               <p className="text-purple-300">
                 Don't have an account?{' '}
-                <a href="/map-front/register" className="text-white font-semibold underline hover:text-purple-200 transition-colors">
+                <a href="/map-front/#/register" className="text-white font-semibold underline hover:text-purple-200 transition-colors">
                   Sign Up
                 </a>
               </p>
-              <a href="#forgot" className="text-purple-400 hover:text-purple-300 transition-colors">
+              <a href="/map-front/#/forgot" className="text-purple-400 hover:text-purple-300 transition-colors">
                 Forgot Password
               </a>
             </div>

@@ -63,7 +63,7 @@ export default function MapPage() {
     return (
         <main className="app relative">
             <button
-                onClick={() => navigate('/map-front/gameSelection')}
+                onClick={() => navigate('/gameSelection')}
                 className="absolute top-4 left-4 z-50 p-3 rounded-xl bg-[#273b40]/80 backdrop-blur-md border border-[#3c4748] text-[#cae9ea] hover:bg-[#208c8c]/40 hover:border-[#208c8c] transition-all shadow-lg cursor-pointer flex items-center justify-center"
                 title="Volver a selección de juegos"
             >

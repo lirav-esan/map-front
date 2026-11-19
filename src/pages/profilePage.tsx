@@ -76,7 +76,7 @@ export const ProfilePage: React.FC = () => {
       
       {/* Botón de retroceso flotante */}
       <button
-        onClick={() => navigate('/map-front/gameSelection')}
+        onClick={() => navigate('/gameSelection')}
         className="absolute top-6 left-6 z-50 p-3 rounded-xl bg-[#273b40]/80 backdrop-blur-xl border border-[#3c4748] text-[#cae9ea] hover:bg-[#208c8c]/30 hover:border-[#208c8c] transition-all shadow-lg cursor-pointer flex items-center gap-2"
       >
         <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -193,7 +193,7 @@ export const ProfilePage: React.FC = () => {
             {FAVORITE_MAPS.map((map) => (
               <div
                 key={map.id}
-                onClick={() => navigate(`/map-front/map/${map.id}`)}
+                onClick={() => navigate(`/map/${map.id}`)}
                 className="group flex items-center gap-4 bg-[#1d1d1d]/70 border border-[#3c4748] p-4 rounded-2xl hover:border-[#208c8c] cursor-pointer transition-all shadow-md"
               >
                 <img src={map.image} alt={map.title} className="w-16 h-16 rounded-xl object-cover border border-[#3c4748] group-hover:scale-105 transition-transform" />

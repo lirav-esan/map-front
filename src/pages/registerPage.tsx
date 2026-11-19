@@ -208,7 +208,7 @@ export const RegisterPage: React.FC = () => {
             <div className="pt-2 text-center text-sm">
               <p className="text-purple-300">
                 Already have an account?{' '}
-                <a href="/map-front/login" className="text-white font-semibold underline hover:text-purple-200 transition-colors">
+                <a href="/map-front/#/login" className="text-white font-semibold underline hover:text-purple-200 transition-colors">
                   Sign In
                 </a>
               </p>
