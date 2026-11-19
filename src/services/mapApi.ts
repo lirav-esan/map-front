@@ -1,7 +1,7 @@
 import type { MapNode } from '../components/GameMap'
 import type { MapFilterCategory } from '../components/MapFilters'
 
-const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:5261/api').replace(/\/+$/, '')
+const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL ?? 'http://map-api-bd.onrender.com/api/').replace(/\/+$/, '')
 // Version 3 aligns markers with the concrete categories returned by the summary.
 const CACHE_VERSION = 3
 
