@@ -51,7 +51,7 @@ export const LoginPage: React.FC = () => {
         localStorage.setItem('savedEmail', email);
       }
 
-      navigate('/map-front/gameSelection');
+      navigate('/gameSelection');
     } catch (err: any) {
       setError(err.message || 'Credenciales inválidas o error de conexión.');
       captchaRef.current?.resetCaptcha();
@@ -88,7 +88,7 @@ export const LoginPage: React.FC = () => {
       localStorage.setItem('username', data.username);
       localStorage.setItem('email', data.email);
 
-      navigate('/map-front/gameSelection');
+      navigate('/gameSelection');
     } catch (err: any) {
       setError(err.message || 'No se pudo iniciar sesión con Google.');
     } finally {

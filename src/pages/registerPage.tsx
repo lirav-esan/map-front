@@ -39,7 +39,7 @@ export const RegisterPage: React.FC = () => {
       localStorage.setItem('email', data.email);
 
       // Redirigir al dashboard
-      navigate('/map-front/gameSelection');
+      navigate('/gameSelection');
     } catch (err: any) {
       setError(err.message || 'No se pudo completar el registro.');
     } finally {
@@ -55,7 +55,7 @@ export const RegisterPage: React.FC = () => {
     try {
       const idToken = credentialResponse.credential;
 
-      const response = await fetch('http://localhost:5261/api/Auth/google', {
+      const response = await fetch('https://map-api-bd.onrender.com/api/Auth/google', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ idToken }),
@@ -72,7 +72,7 @@ export const RegisterPage: React.FC = () => {
       localStorage.setItem('username', data.username);
       localStorage.setItem('email', data.email);
 
-      navigate('/map-front/gameSelection');
+      navigate('/gameSelection');
     } catch (err: any) {
       setError(err.message || 'No se pudo completar el registro con Google.');
     } finally {
