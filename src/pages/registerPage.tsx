@@ -18,7 +18,7 @@ export const RegisterPage: React.FC = () => {
     setLoading(true);
 
     try {
-      const response = await fetch('http://localhost:5261/api/auth/register', {
+      const response = await fetch('http://map-api-bd.onrender.com/api/auth/register', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
