@@ -70,7 +70,7 @@ export const LoginPage: React.FC = () => {
       // credentialResponse.credential es el IdToken que valida GoogleJsonWebSignature en el backend
       const idToken = credentialResponse.credential;
 
-      const response = await fetch('http://map-api-bd.onrender.com/api/Auth/google', {
+      const response = await fetch('https://map-api-bd.onrender.com/api/Auth/google', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ idToken }),
