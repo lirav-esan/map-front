@@ -7,6 +7,7 @@ export interface MapFilterCategory {
   count: number
   visible: boolean
   group?: string
+  checkedCount?: number
 }
 
 interface MapFiltersProps {
@@ -124,7 +125,7 @@ function MapFilters({
                   >
                     <span className="map-filters__category-icon" aria-hidden="true">◆</span>
                     <span>{category.label}</span>
-                    <small>0/{category.count}</small>
+                    <small>{category.checkedCount ?? 0}/{category.count}</small>
                   </button>
                 </li>
               ))}

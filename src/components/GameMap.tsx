@@ -32,6 +32,7 @@ export interface GameMapProps {
   /** Cada hijo se dibuja como un marcador en la coordenada indicada. */
   children?: GameMapChild[]
   filterCategories?: MapFilterCategory[]
+  onToggleMarker?: (markerId: string) => void
   className?: string
 }
 
@@ -86,6 +87,7 @@ function GameMap({
   image,
   children = [],
   filterCategories = [],
+  onToggleMarker,
   className = '',
 }: GameMapProps) {
   const { settings } = useUserSettings()
@@ -117,6 +119,9 @@ function GameMap({
     return Array.from(categoryMap.values()).map((category) => ({
       ...category,
       visible: !hiddenCategories.has(category.id),
+      checkedCount: nodes.filter((node) =>
+        (node.category ?? 'Puntos del mapa') === category.id && node.checked,
+      ).length,
     }))
   }, [filterCategories, hiddenCategories, nodes])
 
@@ -196,14 +201,25 @@ function GameMap({
                       popupAnchor: [0, -12],
                     }) : undefined}
                   >
-                    {node.title && displayTitles && (
-                      <Popup>
-                        <strong>{node.title}</strong>
-                        <br />
-                        {node.content}
-                      </Popup>
-                    )}
-                    {!node.title && <Popup>{node.content}</Popup>}
+                    <Popup>
+                      {node.title && displayTitles && (
+                        <>
+                          <strong>{node.title}</strong>
+                          <br />
+                        </>
+                      )}
+                      {node.content}
+                      {onToggleMarker && (
+                        <label className="mt-2 flex cursor-pointer items-center gap-2">
+                          <input
+                            type="checkbox"
+                            checked={Boolean(node.checked)}
+                            onChange={() => onToggleMarker(node.id)}
+                          />
+                          {isEnglish ? 'Collected' : 'Recolectado'}
+                        </label>
+                      )}
+                    </Popup>
                   </Marker>
                 ))}
               </MapContainer>
