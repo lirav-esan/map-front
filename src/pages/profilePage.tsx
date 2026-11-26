@@ -1,43 +1,20 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useUserSettings } from '../hooks/useUserSettings';
+import { getMapUserData, type MapUserData } from '../services/mapUserData';
 
-// Datos hardcodeados iniciales para favoritos y progreso (listos para mapear a la BD en el futuro)
-interface FavoriteMap {
-  id: string;
-  title: string;
-  genre: string;
-  image: string;
-}
-
-interface MapProgress {
-  id: string;
-  title: string;
-  discovered: number;
-  total: number;
-  percentage: number;
-}
-
-const FAVORITE_MAPS: FavoriteMap[] = [
-  {
-    id: 'monster-hunter',
+const MAP_DETAILS: Record<string, { title: string; genre: string; image: string }> = {
+  'monster-hunter': {
     title: 'Monster Hunter (Shrine Ruins)',
     genre: 'Action RPG',
-    image: 'https://wallpapercave.com/wp/wp12233480.jpg',
+    image: 'https://images4.alphacoders.com/110/thumb-1920-1102315.jpg',
   },
-  {
-    id: 'honkai-star-rail',
-    title: 'Honkai: Star Rail',
-    genre: 'Turn-based RPG',
-    image: 'https://wallpaperbat.com/img/1438576-honkai-star-rail-wallpaper-by-hoyoverse-anime-image-board.jpg',
+  'wuthering-waves': {
+    title: 'Wuthering Waves',
+    genre: 'Action RPG',
+    image: 'https://4kwallpapers.com/images/walls/thumbs_3t/24686.jpg',
   },
-];
-
-const MAP_PROGRESS_DATA: MapProgress[] = [
-  { id: 'monster-hunter', title: 'Monster Hunter (Shrine Ruins)', discovered: 38, total: 50, percentage: 76 },
-  { id: 'wuthering-waves', title: 'Wuthering Waves', discovered: 12, total: 60, percentage: 20 },
-  { id: 'honkai-star-rail', title: 'Honkai: Star Rail', discovered: 45, total: 45, percentage: 100 },
-];
+};
 
 export const ProfilePage: React.FC = () => {
   const navigate = useNavigate();
@@ -48,19 +25,43 @@ export const ProfilePage: React.FC = () => {
         back: 'Back', edit: 'Edit Profile', cancel: 'Cancel', account: 'Account Settings',
         username: 'Username', email: 'Email', save: 'Save Changes', worlds: 'Mapped Worlds',
         rank: 'User Rank', status: 'System Status', favorites: 'Favorite Maps', saved: 'saved',
-        progress: 'Exploration Progress', collectibles: 'collectibles',
+        progress: 'Exploration Progress', collectibles: 'collectibles', noFavorites: 'No favorite maps yet.',
+        noProgress: 'Mark map points to start tracking your progress.',
       }
     : {
         back: 'Volver', edit: 'Editar Perfil', cancel: 'Cancelar', account: 'Configuración de cuenta',
         username: 'Nombre de usuario', email: 'Correo electrónico', save: 'Guardar cambios',
         worlds: 'Mundos mapeados', rank: 'Rango de usuario', status: 'Estado del sistema',
         favorites: 'Mapas favoritos', saved: 'guardados', progress: 'Progreso de exploración',
-        collectibles: 'coleccionables',
+        collectibles: 'coleccionables', noFavorites: 'Aún no tienes mapas favoritos.',
+        noProgress: 'Marca puntos en el mapa para empezar a registrar tu progreso.',
       };
   const [username, setUsername] = useState(localStorage.getItem('username') || 'Explorer');
   const [email, setEmail] = useState(localStorage.getItem('email') || 'explorer@rog.com');
   const [isEditing, setIsEditing] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
+  let mapData: MapUserData | null = null;
+  let mapDataError = '';
+  try {
+    mapData = getMapUserData();
+  } catch (cause) {
+    mapDataError = cause instanceof Error ? cause.message : 'No se pudieron leer los datos guardados de mapas.';
+  }
+  const favorites = (mapData?.favoriteMapIds ?? [])
+    .map((id) => ({ id, ...MAP_DETAILS[id] }))
+    .filter((map): map is { id: string; title: string; genre: string; image: string } => Boolean(map.title));
+  const progress = Object.entries(mapData?.progressByMap ?? {})
+    .filter(([id, entry]) => Boolean(MAP_DETAILS[id]) && entry.checkedMarkerIds.length > 0 && entry.totalMarkers > 0)
+    .map(([id, entry]) => {
+      const discovered = Math.min(entry.checkedMarkerIds.length, entry.totalMarkers);
+      return {
+        id,
+        title: MAP_DETAILS[id].title,
+        discovered,
+        total: entry.totalMarkers,
+        percentage: Math.round((discovered / entry.totalMarkers) * 100),
+      };
+    });
 
   const handleSave = (e: React.FormEvent) => {
     e.preventDefault();
@@ -185,20 +186,22 @@ export const ProfilePage: React.FC = () => {
           <h2 className="text-xl font-bold text-white mb-6 flex items-center justify-between">
             <span>{text.favorites}</span>
             <span className="text-xs font-mono bg-[#208c8c]/20 text-[#208c8c] border border-[#208c8c]/40 px-3 py-1 rounded-full">
-              {FAVORITE_MAPS.length} {text.saved}
+              {favorites.length} {text.saved}
             </span>
           </h2>
+          {mapDataError && <p role="alert" className="mb-4 text-sm text-red-200">{mapDataError}</p>}
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {FAVORITE_MAPS.map((map) => (
+            {favorites.length === 0 && <p className="text-sm text-[#cae9ea]/60">{text.noFavorites}</p>}
+            {favorites.map((map) => (
               <div
                 key={map.id}
                 onClick={() => navigate(`/map/${map.id}`)}
                 className="group flex items-center gap-4 bg-[#1d1d1d]/70 border border-[#3c4748] p-4 rounded-2xl hover:border-[#208c8c] cursor-pointer transition-all shadow-md"
               >
                 <img src={map.image} alt={map.title} className="w-16 h-16 rounded-xl object-cover border border-[#3c4748] group-hover:scale-105 transition-transform" />
-                <div className="flex-grow">
-                  <h3 className="font-bold text-white group-hover:text-[#208c8c] transition-colors">{map.title}</h3>
+                <div className="min-w-0 flex-grow">
+                  <h3 className="break-words font-bold text-white group-hover:text-[#208c8c] transition-colors">{map.title}</h3>
                   <p className="text-xs text-[#cae9ea]/60">{map.genre}</p>
                 </div>
                 <svg className="w-5 h-5 text-[#cae9ea]/40 group-hover:text-[#208c8c] transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -214,11 +217,12 @@ export const ProfilePage: React.FC = () => {
           <h2 className="text-xl font-bold text-white mb-6">{text.progress}</h2>
 
           <div className="space-y-6">
-            {MAP_PROGRESS_DATA.map((prog) => (
+            {progress.length === 0 && <p className="text-sm text-[#cae9ea]/60">{text.noProgress}</p>}
+            {progress.map((prog) => (
               <div key={prog.id} className="space-y-2">
-                <div className="flex justify-between items-center text-sm">
+                <div className="flex flex-col gap-1 text-sm sm:flex-row sm:items-center sm:justify-between">
                   <span className="font-semibold text-white">{prog.title}</span>
-                  <span className="text-xs font-mono text-[#208c8c]">{prog.discovered} / {prog.total} {text.collectibles} ({prog.percentage}%)</span>
+                  <span className="text-xs font-mono text-[#208c8c] sm:text-right">{prog.discovered} / {prog.total} {text.collectibles} ({prog.percentage}%)</span>
                 </div>
                 {/* Barra de Progreso Holográfica */}
                 <div className="w-full h-3 bg-[#1d1d1d] rounded-full overflow-hidden border border-[#3c4748] p-0.5">

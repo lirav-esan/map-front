@@ -14,7 +14,7 @@ const GAMES_DATA: Game[] = [
     id: 'monster-hunter', 
     title: 'Monster Hunter', 
     genre: 'Action RPG', 
-    image: 'https://wallpapercave.com/wp/wp12233480.jpg' 
+    image: 'https://images4.alphacoders.com/110/thumb-1920-1102315.jpg' 
   },
   { 
     id: 'wuthering-waves', 
